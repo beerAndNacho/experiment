@@ -26,3 +26,19 @@ git repository에 파일 변경 이력 별로 구분되어 저장된다.
 2번째 줄 : 빈 칸
 3번째 줄 : 변경한 이유
 
+
+
+----> git add [해당 파일명]                        / git add 취소 방법 git restore [해당 파일명]
+
+----> git commit -m " [내용적는다.]                / git commit 취소 방법 git log --online         /         git reset [options] [돌아고 싶은 이전 커밋의 HEAD] 
+options에는 총 세가지 존재한다. -soft / -mixed / -hard        
+-soft는 index 보존(add, staged 상태), 워킹 디렉터리의 파일 보존 (아무것도 바꾸지 않는다.)
+-mixed는 index취소 (add하기 전 상태, unstaged 상태), 워킹 디렉터리의 파일 보전(기본옵션)
+-hard는 index취소 (add하기 전 상태, unstaged 상태). 워킹 디렉터리의 파일 삭제!!! (모두 취소)
+
+-hard의 경우 index를 취소하는 것은 물론이며 파일을 삭제해버리니 주의!!!
+-단, 이 명령을 사용하면 원격 저장소에 있는 마지막 commit 이후의 워킹 디렉터리와 add했던 파일들이 모두 사라지므로 주의해야 한다.
+
+
+" (3줄 이상 적기 위해서는 마침 따옴표를 엔터 이후에 적는다. git bash에서 작동)
+---> git push를 함으로써 원격 저장소에 밀어넣는다.
