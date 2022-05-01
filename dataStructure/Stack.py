@@ -41,12 +41,10 @@ def pop():
     return data
 
 
-
 for index in range(10):
     push(index)
 
 pop()    
-
 
 장점
 구조가 단순해서, 구현이 쉽다.
