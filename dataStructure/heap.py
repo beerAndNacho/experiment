@@ -39,7 +39,7 @@ class Heap:
             inserted_idx = parent_idx
         return True
         
-
+# insert 될 때마다 배열과 동시에 부모와 자식간의 값을 비교하여 값의 위치를 바꾼다!
 heap = Heap(15)
 heap.insert(10)
 heap.insert(8)
