@@ -9,5 +9,4 @@ const promise2 = Pormise.resolve('성공2');
     }
 })
 
-
 // 앞으로 중처보디는 콜백 함수가 있다면 프로미스를 거쳐 async/await 문법을 바꾸는 연습을 해야한다.

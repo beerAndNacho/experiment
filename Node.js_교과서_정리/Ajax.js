@@ -26,8 +26,8 @@ var xhr = new XMLHttpRequest();
 var data = {
     name :"",
     birth:""
-
 }
+
 xhr.onreadystatechange = function() {
     if (xhr.readState === xhr.DONE) {
         if(xhr.readyState === 200 || xhr.status === 201) {

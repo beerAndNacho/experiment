@@ -14,10 +14,6 @@ const promise   = new Promise((resolve, reject) => {
 //     console.error(error);
 // })
 
-
-//
-
-
 promise.then((message) => {
     return new Promise((resolve, reject) => {
         resolve(message);
@@ -35,8 +31,6 @@ promise.then((message) => {
 .catch((error) => {
     console.error(error);
 })
-
-
 
 // 프로미스 활용 방법
 // function findAndSaveUser(Users) {
@@ -59,8 +53,7 @@ promise.then((message) => {
 // }
 
 
-
 const promise1 = Promise.resolve('성공1');
-const promise2 = Pormise.resolve('성공2');
+const promise2 = Promise.resolve('성공2');
 
 Promise.all([promise1, promise2])

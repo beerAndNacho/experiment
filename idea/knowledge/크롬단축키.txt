@@ -1,6 +1,5 @@
 [Chrome 단축키 정리]
 
-
 ctrl + t - 새 탭 열기
 
 ctrl + shift + t - ghotst 새 탭 열기
@@ -10,9 +9,6 @@ ctrl + f - 현재 창에서 특정 단어나 문장 찾기
 ***(매우중요)*** ctrl + f 실행하여 특정 단어나 문장을 찾고 ctrl + enter 누르면 해당 패이지로 이동
 
 ctrl + w - 탭 닫기
-
-
-
 
 
 alt + 방향키 (왼쪽) - 뒤로 이동
