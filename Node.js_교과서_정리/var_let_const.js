@@ -2,16 +2,10 @@
 var el = 0;
 function test() {
     var el = 1;
-
     console.log(el);
-
-
 }
 
-
 console.log(el);
-
-
 
 var el2 = 0;
 
@@ -22,8 +16,6 @@ var el2 = 0;
 
 console.log(el2);
 
-
-
 let el3 = 0;
 
 {
@@ -32,7 +24,6 @@ let el3 = 0;
 }
 
 console.log(el3);
-
 
 // var는 함수스코프를 갖고 let const는 블록 스코프를 갖는다.
 // 이는 var는 함수 안에서만 어떤 특정한 범위를 갖고 

@@ -1,0 +1,15 @@
+https://www.cubrid.org/manual/ko/9.3.0/admin/control.html
+
+*주의할 것
+(확장명)
+db.access.txt       (x)
+db.access           (o)
+
+# cubrid.conf
+access_ip_control=yes
+access_ip_control_file="/home/CUBRID/db.access"
+
+db.access는 access_ip_control_file로 작성 형식은 다음과 같다.
+[@chabot_drill]
+192.168.1.15
+
