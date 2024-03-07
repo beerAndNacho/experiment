@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="schome.common">
+
+    <!-- 공통 KEY 조회 -->
+    <select id="getRecKey" resultType="String">
+        SELECT kerishome_seq.nextVal from dual
+    </select>
+
+    <!-- 회원 조회 -->
+    <select id="getMemberInfo" resultType="MemberInfoVO">
+        SELECT *
+          FROM member_info
+         WHERE member_key = #{memberKey}
+    </select>
+
+    <!-- 학교 조회 -->
+    <select id="getSchool" resultType="SchoolVO">
+        SELECT *
+          FROM school
+         WHERE sch_key = #{schKey}
+    </select>
+
+    <!-- 페이징 쿼리 탬플릿 -->
+    <sql id="pagingStart">
+        SELECT * FROM (
+                          SELECT ROWNUM as rnum, PAGING_TB.* FROM (
+    </sql>
+
+    <sql id="pagingEnd">
+        ) PAGING_TB WHERE ROWNUM &lt;= (#{pageIndex} * #{pageSize})
+        )
+        WHERE rnum >= (((#{pageIndex} - 1) * #{pageSize}) + 1)
+    </sql>
+
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="jdbcTypeForNull" value="NULL" />
+        <setting name="callSettersOnNulls" value="true" />
+    </settings>
+    <typeAliases>
+<!--        <typeAlias alias="readingActivitesVO" type="com.keris.schome.common.vo.ReadingActivitesVO" />-->
+<!--        <typeAlias alias="readingActivitesFileVO" type="com.keris.schome.common.vo.ReadingActivitesFileVO" />-->
+    </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="com.keris.schome.common.handler.LongTypeHandler" javaType="String" jdbcType="LONGVARCHAR" />
+    </typeHandlers>
+</configuration>

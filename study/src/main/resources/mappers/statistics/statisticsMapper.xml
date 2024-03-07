@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="centerBoard">
+
+    <sql id="CenterBoardListWhere">
+        <where>
+            <if test="regMember != null and regMember neq ''">
+                AND REG_MEMBER = #{regMember}
+            </if>
+            <if test="searchText != null and searchText	neq ''">
+                AND (TITLE LIKE '%' ||#{searchText}|| '%')
+            </if>
+            <if test="searchStartDate != null and searchStartDate neq ''">
+                <![CDATA[
+                    AND REG_DATE >= #{searchStartDate}
+                ]]>
+            </if>
+            <if test="searchEndDate != null and searchEndDate neq ''">
+                <![CDATA[
+                    AND REG_DATE <= #{searchEndDate}
+                ]]>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 센터자료실 목록 조회 -->
+    <select id="selectCenterBoardList" resultType="CenterBoardVO" parameterType="CenterBoardVO">
+        <include refid="schome.common.pagingStart"/>
+        SELECT
+            CENTER_BOARD_KEY,
+            MEMBER_KEY,
+            REG_MEMBER,
+            PROV_CODE,
+            TITLE,
+            CONTENT,
+            VIEW_COUNT,
+            REG_CODE,
+            TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE,
+            (SELECT COUNT(*) FROM CENTER_BOARD_FILE B WHERE B.CENTER_BOARD_KEY=A.CENTER_BOARD_KEY) AS FILE_CNT
+        FROM
+            CENTER_BOARD A
+        <include refid="CenterBoardListWhere"/>
+        ORDER BY REG_DATE DESC
+        <include refid="schome.common.pagingEnd"/>
+    </select>
+
+    <!-- 센터자료실 목록 COUNT -->
+    <select id="selectCenterBoardListCount" parameterType="CenterBoardVO" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM
+            CENTER_BOARD
+        <include refid="CenterBoardListWhere"/>
+    </select>
+
+    <!-- 센터자료실 첨부파일 목록 조회 -->
+    <select id="selectCenterBoardFileList" parameterType="CenterBoardVO" resultType="CenterBoardFileVO">
+        SELECT
+            CENTER_BOARD_FILE_KEY,
+            ORIGINAL_FILE_NAME,
+            SAVE_FILE_NAME,
+            REG_DATE
+        FROM
+            CENTER_BOARD_FILE
+        WHERE
+            CENTER_BOARD_KEY=#{centerBoardKey}
+    </select>
+
+    <!-- 센터자료실 첨부파일 단건 조회 -->
+    <select id="selectCenterBoardFileDetail" parameterType="CenterBoardFileVO" resultType="CenterBoardFileVO">
+        SELECT
+            CENTER_BOARD_FILE_KEY,
+            CENTER_BOARD_KEY,
+            ORIGINAL_FILE_NAME,
+            SAVE_FILE_NAME,
+            TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE
+        FROM
+            CENTER_BOARD_FILE
+        WHERE
+            CENTER_BOARD_FILE_KEY=#{centerBoardFileKey}
+    </select>
+
+    <!-- 센터자료실 상세 조회 -->
+    <select id="selectCenterBoardDetail" parameterType="CenterBoardVO" resultType="CenterBoardVO">
+        SELECT
+            A.CENTER_BOARD_KEY,
+            A.MEMBER_KEY,
+            A.REG_MEMBER,
+            A.PROV_CODE,
+            A.TITLE,
+            A.CONTENT,
+            A.VIEW_COUNT,
+            A.REG_CODE,
+            TO_CHAR(A.REG_DATE, 'YYYY-MM-DD') AS REG_DATE,
+            (SELECT COUNT(*) FROM CENTER_BOARD_FILE B WHERE B.CENTER_BOARD_KEY=A.CENTER_BOARD_KEY) AS FILE_CNT,
+            PREV.CENTER_BOARD_KEY AS PREV_CODE,
+            PREV.TITLE AS PREV_SUBJECT,
+            NEXT.CENTER_BOARD_KEY AS NEXT_CODE,
+            NEXT.TITLE AS NEXT_SUBJECT
+        FROM
+            CENTER_BOARD A
+
+        LEFT JOIN (
+        SELECT
+            CENTER_BOARD_KEY,
+            TITLE
+        FROM
+            CENTER_BOARD
+        WHERE
+            CENTER_BOARD_KEY <![CDATA[<]]> #{centerBoardKey}
+        ORDER BY
+            CENTER_BOARD_KEY DESC
+        FETCH FIRST 1 ROWS ONLY
+        ) PREV ON 1=1
+
+        LEFT JOIN (
+        SELECT
+            CENTER_BOARD_KEY,
+            TITLE
+        FROM
+            CENTER_BOARD
+        WHERE
+            CENTER_BOARD_KEY <![CDATA[>]]> #{centerBoardKey}
+        ORDER BY
+            CENTER_BOARD_KEY ASC
+        FETCH FIRST 1 ROWS ONLY
+        ) NEXT ON 1=1
+
+        WHERE
+            A.CENTER_BOARD_KEY=#{centerBoardKey}
+    </select>
+
+    <!-- 센터자료실 조회수 증가 -->
+    <update id="updateViewCount" parameterType="CenterBoardVO">
+        UPDATE
+            CENTER_BOARD
+        SET
+            VIEW_COUNT=VIEW_COUNT+1
+        WHERE
+            CENTER_BOARD_KEY=#{centerBoardKey}
+    </update>
+
+    <!-- 센터자료실 등록 -->
+    <insert id="insertCenterBoard" parameterType="CenterBoardVO" keyProperty="centerBoardKey">
+
+        <selectKey keyProperty="centerBoardKey" resultType="String" order="BEFORE">
+            SELECT kerishome_seq.nextVal from dual
+        </selectKey>
+
+        INSERT INTO
+            CENTER_BOARD (
+                CENTER_BOARD_KEY,
+                MEMBER_KEY,
+                REG_MEMBER,
+                PROV_CODE,
+                TITLE,
+                CONTENT,
+                VIEW_COUNT,
+                REG_CODE,
+                REG_DATE
+            ) VALUES (
+                #{centerBoardKey},
+                #{memberKey},
+                #{regMember},
+                #{provCode},
+                #{title},
+                #{content},
+                #{viewCount},
+                #{regCode},
+                sysdate
+            )
+    </insert>
+
+    <!-- 센터자료실 수정 -->
+    <update id="updateCenterBoard" parameterType="CenterBoardVO">
+        UPDATE
+            CENTER_BOARD
+        SET
+        <if test="title != null and title neq ''">
+            , TITLE = #{title}
+        </if>
+        <if test="content != null and content neq ''">
+            , CONTENT = #{content}
+        </if>
+        WHERE
+            CENTER_BOARD_KEY = #{centerBoardKey}
+    </update>
+
+    <!-- 센터자료실 삭제 -->
+    <delete id="deleteCenterBoard" parameterType="CenterBoardVO">
+        DELETE FROM
+            CENTER_BOARD
+        WHERE
+            CENTER_BOARD_KEY = #{centerBoardKey}
+    </delete>
+
+    <!-- 센터자료실 댓글목록 조회 -->
+    <select id="selectCommentList" parameterType="CenterBoardCommentVO" resultType="CenterBoardCommentVO">
+        SELECT
+            CENTER_BOARD_COMMENT_KEY,
+            CENTER_BOARD_KEY,
+            MEMBER_KEY,
+            COMMENT_CONTENT,
+            TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE
+        FROM
+            CENTER_BOARD_COMMENT
+        WHERE
+            CENTER_BOARD_KEY=#{centerBoardKey}
+    </select>
+
+    <!-- 센터자료실 댓글목록 COUNT -->
+    <select id="selectCommentListCount" parameterType="CenterBoardCommentVO" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM
+            CENTER_BOARD_COMMENT
+        WHERE
+            CENTER_BOARD_KEY=#{centerBoardKey}
+    </select>
+
+    <!-- 센터자료실 댓글 상세 조회 -->
+    <select id="selectCenterBoardCommentDetail" parameterType="CenterBoardCommentVO" resultType="CenterBoardCommentVO">
+        SELECT
+            CENTER_BOARD_COMMENT_KEY,
+            CENTER_BOARD_KEY,
+            MEMBER_KEY,
+            COMMENT_CONTENT,
+            REG_DATE
+        FROM
+            CENTER_BOARD_COMMENT
+        WHERE
+            CENTER_BOARD_COMMENT_KEY = #{centerBoardCommentKey}
+    </select>
+
+    <!-- 센터자료실 댓글 등록 -->
+    <insert id="insertComment" parameterType="CenterBoardCommentVO" keyProperty="centerBoardCommentKey">
+
+        <selectKey keyProperty="centerBoardCommentKey" resultType="String" order="BEFORE">
+            SELECT kerishome_seq.nextVal FROM dual
+        </selectKey>
+
+        INSERT INTO
+            CENTER_BOARD_COMMENT (
+                CENTER_BOARD_COMMENT_KEY,
+                CENTER_BOARD_KEY,
+                MEMBER_KEY,
+                COMMENT_CONTENT,
+                REG_DATE
+            ) VALUES (
+                #{centerBoardCommentKey},
+                #{centerBoardKey},
+                #{memberKey},
+                #{commentContent},
+                sysdate
+            )
+    </insert>
+
+    <!-- 센터자료실 댓글 수정 -->
+    <update id="updateComment" parameterType="CenterBoardCommentVO">
+        UPDATE
+            CENTER_BOARD_COMMENT
+        SET
+            COMMENT_CONTENT = #{commentContent}
+        WHERE
+            CENTER_BOARD_COMMENT_KEY = #{centerBoardCommentKey}
+    </update>
+
+    <!-- 센터자료실 댓글 삭제 -->
+    <delete id="deleteComment" parameterType="CenterBoardCommentVO">
+        DELETE FROM
+            CENTER_BOARD_COMMENT
+        WHERE
+            CENTER_BOARD_COMMENT_KEY = #{centerBoardCommentKey}
+    </delete>
+
+</mapper>
